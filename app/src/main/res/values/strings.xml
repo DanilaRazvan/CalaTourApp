@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CalaTour</string>
+
+    <string name="login_text">Login</string>
+</resources>

@@ -1,0 +1,28 @@
+{
+  "offers": [
+    {
+      "image": "https://i.imgur.com/D7LiBDn.png",
+      "city": "Barcelona",
+      "period": "3 nights",
+      "price": 300,
+      "currency": "EUR",
+      "description": "Barcelona has many venues for live music and theatre, including the world-renowned Gran Teatre del Liceu opera"
+    },
+    {
+      "image": "https://i.imgur.com/5umpI6K.png",
+      "city": "Maldive",
+      "period": "7 nights",
+      "price": 1050,
+      "currency": "EUR",
+      "description": "The first Maldivians did not leave any archaeological artifacts. Their buildings were probably built of wood, palm"
+    },
+    {
+      "image": "https://i.imgur.com/q0EeSYx.png",
+      "city": "Thailand",
+      "period": "10 nights",
+      "price": 1250,
+      "currency": "EUR",
+      "description": "The Andaman Sea is a precious natural resource as it holds the most popular and luxurious resorts in Asia. Phuket,"
+    }
+  ]
+}
