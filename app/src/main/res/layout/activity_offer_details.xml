@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OfferDetailsActivity">
+
+    <TextView
+        android:id="@+id/offerDetailTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textStyle="bold"
+        android:textSize="36sp"
+        android:textColor="@color/black"
+
+        tools:text="Title Text"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/offerDetailImage"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+
+        android:scaleType="fitXY"
+        tools:srcCompat="@tools:sample/avatars"
+
+        app:layout_constraintTop_toBottomOf="@id/offerDetailTitle"
+        />
+
+    <TextView
+        android:id="@+id/offerDetailDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        tools:text="description"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+
+        app:layout_constraintTop_toBottomOf="@id/offerDetailImage"
+        />
+
+    <TextView
+        android:id="@+id/offerDetailCounter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        tools:text="description"
+        android:textStyle="bold|italic"
+        android:textSize="30sp"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+
+        app:layout_constraintTop_toBottomOf="@id/offerDetailDescription"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/offerDetailPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        tools:text="300EUR"
+
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintEnd_toEndOf="@id/offerDetailImage"
+        app:layout_constraintBottom_toBottomOf="@id/offerDetailImage"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

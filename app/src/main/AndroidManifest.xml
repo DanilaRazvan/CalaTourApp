@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CalaTour">
         <activity
+            android:name=".OfferDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".OffersActivity"
             android:exported="false" />
         <activity

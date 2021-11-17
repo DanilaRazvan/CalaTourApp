@@ -12,8 +12,9 @@ import com.squareup.picasso.Picasso
 
 class OffersAdapter(
     private val context: Context,
-    private var dataSource: List<Offer>
 ) : BaseAdapter() {
+
+    private val dataSource: MutableList<Offer> = mutableListOf()
 
     private val inflater: LayoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -44,5 +45,24 @@ class OffersAdapter(
         return rowView
     }
 
+    fun addOffer(position: Int, offer: Offer) {
+        dataSource.add(position, offer)
+        notifyDataSetChanged()
+    }
+
+    fun removeOffer(position: Int) {
+        dataSource.removeAt(position)
+        notifyDataSetChanged()
+    }
+
+    fun setDataSource(newItems: List<Offer>) {
+        dataSource.clear()
+        dataSource.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+    fun increaseViews(position: Int) {
+        dataSource[position].counter++
+    }
 
 }

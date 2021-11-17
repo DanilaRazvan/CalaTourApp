@@ -2,4 +2,8 @@
     <string name="app_name">CalaTour</string>
 
     <string name="login_text">Login</string>
+    <string name="sing_out">Sing Out</string>
+    <string name="reset_list">Reset List</string>
+    <string name="clear_favorites">Clear Favorites</string>
+    <string name="add_to_favorites">Add to favorites</string>
 </resources>

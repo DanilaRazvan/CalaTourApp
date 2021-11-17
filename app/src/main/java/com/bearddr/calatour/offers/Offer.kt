@@ -10,7 +10,9 @@ data class Offer (
     val period: String,
     val price: Int,
     val currency: String,
-    val description: String
+    val description: String,
+    var isFavorite: Boolean = false,
+    var counter: Int = 0
 ): Serializable {
 
     companion object {

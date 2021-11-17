@@ -1,14 +1,18 @@
 package com.bearddr.calatour
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.ContextMenu
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.bearddr.calatour.offers.Offer
 import com.bearddr.calatour.offers.OffersAdapter
 import java.util.*
@@ -17,6 +21,8 @@ import kotlin.concurrent.schedule
 class OffersActivity : AppCompatActivity() {
 
     private lateinit var myAdapter: OffersAdapter
+
+    private val detailsActivityId = 1001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +36,24 @@ class OffersActivity : AppCompatActivity() {
 
         myAdapter = OffersAdapter(
             context = this,
-            dataSource = Offer.getOffersFromFile("offers.json", this)
         )
         listView.adapter = myAdapter
+        listView.setOnItemClickListener { adapterView, view, position, id ->
+            val offer = myAdapter.getItem(position) as Offer
+            myAdapter.increaseViews(position)
+
+            val intent = Intent(this@OffersActivity, OfferDetailsActivity::class.java)
+            intent.putExtra("offer_detail", offer)
+            intent.putExtra("offer_position", position)
+            startActivityForResult(intent, detailsActivityId)
+        }
+        myAdapter.setDataSource(Offer.getOffersFromFile("offers.json", this))
 
         registerForContextMenu(listView)
 
 
+        listView.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
         Timer().schedule(delay = 3000) {
             Handler(mainLooper).post {
                 listView.visibility = View.VISIBLE
@@ -63,6 +80,75 @@ class OffersActivity : AppCompatActivity() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
+
+        val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
+
+        when(item.itemId) {
+            R.id.addOffer -> { myAdapter.addOffer(
+                position = info.position,
+                offer = Offer(
+                    imageUrl = "https://i.imgur.com/D7LiBDn.png",
+                    city = "Cluj-Napoca",
+                    period = "3 night",
+                    price = 300,
+                    currency = "EUR",
+                    description = "Offer description"
+                )
+            ) }
+            R.id.removeOffer -> { myAdapter.removeOffer(
+                position = info.position
+            )}
+        }
         return super.onContextItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.offers_options_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.sign_out -> { onBackPressed() }
+            R.id.reset_list -> {
+                val offers = Offer.getOffersFromFile("offers.json", this)
+                myAdapter.setDataSource(
+                    newItems = offers
+                )
+                Toast.makeText(applicationContext, "List has been reset", Toast.LENGTH_SHORT).show()
+            }
+            R.id.clear_favorites -> { }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        val builder =  AlertDialog.Builder(this)
+        builder.setTitle("PLease Confirm")
+            .setMessage("Are you sure?")
+            .setPositiveButton("Sign Out") { _, _ ->
+                finish()
+            }
+            .setNegativeButton("Cancel", null)
+            .create().show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        when(requestCode) {
+            detailsActivityId -> {
+                if (resultCode == RESULT_OK) {
+                    val isFavorite = data?.getBooleanExtra("offer_isFavorite", false)!!
+                    val position = data.getIntExtra("offer_position", -1)
+
+                    if (position > -1) {
+                        val offer = myAdapter.getItem(position) as Offer
+                        offer.isFavorite = isFavorite
+                    }
+                }
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }
