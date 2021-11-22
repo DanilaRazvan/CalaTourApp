@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import com.bearddr.calatour.util.UserInfo
 import com.google.android.material.textfield.TextInputEditText
 
 class MainActivity : AppCompatActivity() {
@@ -26,42 +27,44 @@ class MainActivity : AppCompatActivity() {
             val usernameVal = usernameInput.text.toString()
             val passwordVal = passwordInput.text.toString()
 
-            var ok = true
+            UserInfo.username = usernameVal
 
-            val usernameResult = validateUsername(usernameVal)
-            if (!usernameResult.first) {
-                usernameError.visibility = View.VISIBLE
-
-                ok = false
-
-                when(usernameResult.second) {
-                    0 -> { usernameError.text = "Username is too short" }
-                    1 -> { usernameError.text = "Username is empty" }
-                    2 -> { usernameError.text = "Username is not valid" }
-                }
-            } else {
-                usernameError.visibility = View.GONE
-            }
-
-            val passwordResult = validatePassword(passwordVal)
-            if (!passwordResult.first) {
-                passwordError.visibility = View.VISIBLE
-
-                ok = false
-
-                when(passwordResult.second) {
-                    0 -> { passwordError.text = "Password is too short" }
-                    1 -> { passwordError.text = "Password is empty" }
-                    2 -> { passwordError.text = "Password is not valid" }
-                }
-            } else {
-                passwordError.visibility = View.GONE
-            }
-
-            if (ok) {
+//            var ok = true
+//
+//            val usernameResult = validateUsername(usernameVal)
+//            if (!usernameResult.first) {
+//                usernameError.visibility = View.VISIBLE
+//
+//                ok = false
+//
+//                when(usernameResult.second) {
+//                    0 -> { usernameError.text = "Username is too short" }
+//                    1 -> { usernameError.text = "Username is empty" }
+//                    2 -> { usernameError.text = "Username is not valid" }
+//                }
+//            } else {
+//                usernameError.visibility = View.GONE
+//            }
+//
+//            val passwordResult = validatePassword(passwordVal)
+//            if (!passwordResult.first) {
+//                passwordError.visibility = View.VISIBLE
+//
+//                ok = false
+//
+//                when(passwordResult.second) {
+//                    0 -> { passwordError.text = "Password is too short" }
+//                    1 -> { passwordError.text = "Password is empty" }
+//                    2 -> { passwordError.text = "Password is not valid" }
+//                }
+//            } else {
+//                passwordError.visibility = View.GONE
+//            }
+//
+//            if (ok) {
                 val intent = Intent(this, OffersActivity::class.java)
                 startActivity(intent)
-            }
+//            }
         }
     }
 

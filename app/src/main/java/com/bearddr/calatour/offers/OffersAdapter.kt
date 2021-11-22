@@ -55,6 +55,14 @@ class OffersAdapter(
         notifyDataSetChanged()
     }
 
+    fun clearFavorites() {
+        dataSource.forEach {
+            it.isFavorite = false
+        }
+
+        notifyDataSetChanged()
+    }
+
     fun setDataSource(newItems: List<Offer>) {
         dataSource.clear()
         dataSource.addAll(newItems)

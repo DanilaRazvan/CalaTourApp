@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.bearddr.calatour.offers.Offer
 import com.bearddr.calatour.offers.OffersAdapter
+import com.bearddr.calatour.util.UserInfo.username
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -117,7 +118,14 @@ class OffersActivity : AppCompatActivity() {
                 )
                 Toast.makeText(applicationContext, "List has been reset", Toast.LENGTH_SHORT).show()
             }
-            R.id.clear_favorites -> { }
+            R.id.clear_favorites -> {
+                myAdapter.clearFavorites()
+            }
+            R.id.chat -> {
+                val intent = Intent(this, ChatActivity::class.java)
+                intent.putExtra("username", username)
+                startActivity(intent)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
