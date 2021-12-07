@@ -12,4 +12,5 @@
     <string name="chat_menu_both_designs">Both designs</string>
     <string name="send">Send</string>
     <string name="username">Username</string>
+    <string name="global_logout">Global Logout</string>
 </resources>

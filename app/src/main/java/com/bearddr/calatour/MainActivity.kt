@@ -1,19 +1,33 @@
 package com.bearddr.calatour
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
+import com.bearddr.calatour.chat.remote.ChatApi
+import com.bearddr.calatour.chat.remote.Requests
+import com.bearddr.calatour.chat.remote.Responses
 import com.bearddr.calatour.util.UserInfo
 import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
+
+    private val chatApi = ChatApi.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val signInText = findViewById<TextView>(R.id.signInText)
 
         val usernameError = findViewById<TextView>(R.id.usernameError)
         val passwordError = findViewById<TextView>(R.id.passwordError)
@@ -21,80 +35,90 @@ class MainActivity : AppCompatActivity() {
         val usernameInput = findViewById<TextInputEditText>(R.id.usernameInput)
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
 
+        usernameInput.doOnTextChanged { text, start, before, count ->
+            usernameError.text = when (text.toString().length) {
+                0 -> "Username cannot be empty"
+                in 1..3 -> "Username too short"
+                else -> ""
+            }
+        }
+        passwordInput.doOnTextChanged { text, start, before, count ->
+            passwordError.text = when (text.toString().length) {
+                0 -> "Password cannot be empty"
+                in 1..3 -> "password too short"
+                else -> ""
+            }
+        }
 
         val button = findViewById<Button>(R.id.loginButton)
         button.setOnClickListener {
             val usernameVal = usernameInput.text.toString()
             val passwordVal = passwordInput.text.toString()
 
-            UserInfo.username = usernameVal
+            chatApi.authenticate(Requests.Authentication(
+                username = usernameVal,
+                password = passwordVal
+            )).enqueue(object : Callback<Responses.Authentication> {
+                override fun onResponse(
+                    call: Call<Responses.Authentication>,
+                    response: Response<Responses.Authentication>
+                ) {
+                    Log.d("TAG", "onResponse: $response")
 
-//            var ok = true
-//
-//            val usernameResult = validateUsername(usernameVal)
-//            if (!usernameResult.first) {
-//                usernameError.visibility = View.VISIBLE
-//
-//                ok = false
-//
-//                when(usernameResult.second) {
-//                    0 -> { usernameError.text = "Username is too short" }
-//                    1 -> { usernameError.text = "Username is empty" }
-//                    2 -> { usernameError.text = "Username is not valid" }
-//                }
-//            } else {
-//                usernameError.visibility = View.GONE
-//            }
-//
-//            val passwordResult = validatePassword(passwordVal)
-//            if (!passwordResult.first) {
-//                passwordError.visibility = View.VISIBLE
-//
-//                ok = false
-//
-//                when(passwordResult.second) {
-//                    0 -> { passwordError.text = "Password is too short" }
-//                    1 -> { passwordError.text = "Password is empty" }
-//                    2 -> { passwordError.text = "Password is not valid" }
-//                }
-//            } else {
-//                passwordError.visibility = View.GONE
-//            }
-//
-//            if (ok) {
-                val intent = Intent(this, OffersActivity::class.java)
-                startActivity(intent)
-//            }
+                    if (response.isSuccessful) {
+                        val body = response.body()!!
+                        UserInfo.username = body.displayName
+                        UserInfo.token = body.token
+                        UserInfo.userId = body.id
+                        Log.d("TAG", "onResponse: $UserInfo")
+
+                        val intent = Intent(this@MainActivity, OffersActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        var errorDetails = Responses.ErrorDetails("Detailed error message is not available")
+                        try {
+                            if (response.errorBody() != null) {
+                                val rawDetails = response.errorBody()!!.string()
+                                val jsonParser = Gson()
+                                errorDetails = jsonParser.fromJson(rawDetails, Responses.ErrorDetails::class.java)
+                            }
+                        } catch (e: Exception) {
+                            errorDetails = Responses.ErrorDetails("Detailed error message could not be retrieved")
+                        }
+
+                        signInText.text = errorDetails.message
+                        signInText.setTextColor(Color.RED)
+                    }
+                }
+
+                override fun onFailure(call: Call<Responses.Authentication>, t: Throwable) {
+                    signInText.text = "Server is unreachable"
+                    signInText.setTextColor(Color.RED)
+                }
+            })
         }
-    }
 
+        val globalLogoutButton = findViewById<Button>(R.id.globalLogoutButton)
+        globalLogoutButton.setOnClickListener {
+            val username = usernameInput.text.toString()
+            val password = passwordInput.text.toString()
+            chatApi.globalLogout(Requests.Authentication(username, password))
+                .enqueue(object : Callback<Void> {
+                    override fun onResponse(
+                        call: Call<Void>,
+                        response: Response<Void>
+                    ) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(applicationContext, "Global logout successful", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(applicationContext, "Some error", Toast.LENGTH_SHORT).show()
+                        }
+                    }
 
-
-    private fun validateUsername(
-        username: String,
-    ): Pair<Boolean, Int> {
-
-        if (username.length < 3)
-            return Pair(false, 0)
-        if (username.isEmpty())
-            return Pair(false, 1)
-        if (username == "admin")
-            return Pair(true, -1)
-
-        return Pair(false, 2)
-    }
-
-    private fun validatePassword(
-        password: String,
-    ): Pair<Boolean, Int> {
-
-        if (password.length < 6)
-            return Pair(false, 0)
-        if (password.isEmpty())
-            return Pair(false, 1)
-        if (password == "password")
-            return Pair(true, -1)
-
-        return Pair(false, 2)
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Toast.makeText(applicationContext, "Internet connection issue", Toast.LENGTH_SHORT).show()
+                    }
+                })
+        }
     }
 }

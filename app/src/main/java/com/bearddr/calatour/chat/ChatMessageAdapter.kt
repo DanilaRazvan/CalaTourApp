@@ -50,6 +50,11 @@ class ChatMessageAdapter : RecyclerView.Adapter<ChatMessageAdapter.ChatMessageVi
         this.notifyItemInserted(0)
     }
 
+    fun insertMessages(messages: List<ChatMessage>) {
+        dataSource.addAll(0, messages)
+        this.notifyItemRangeChanged(0, messages.size)
+    }
+
     inner class ChatMessageViewHolder(itemView: View, design: Int) : RecyclerView.ViewHolder(itemView) {
         private var authorTextView: TextView
         private var contentTextView: TextView

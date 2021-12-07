@@ -72,6 +72,30 @@
         app:layout_constraintStart_toStartOf="@id/passwordInput"
         app:layout_constraintEnd_toEndOf="@id/passwordInput"
         />
+    <TextView
+        android:id="@+id/signInText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        tools:text="erxtrcyvubionpm"
+
+        app:layout_constraintTop_toBottomOf="@id/loginButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/globalLogoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:strokeColor="@color/design_default_color_primary"
+        android:text="@string/global_logout"
+
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

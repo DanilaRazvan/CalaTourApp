@@ -13,13 +13,20 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.bearddr.calatour.chat.remote.ChatApi
 import com.bearddr.calatour.offers.Offer
 import com.bearddr.calatour.offers.OffersAdapter
+import com.bearddr.calatour.util.UserInfo
 import com.bearddr.calatour.util.UserInfo.username
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 import kotlin.concurrent.schedule
 
 class OffersActivity : AppCompatActivity() {
+
+    private val chatApi = ChatApi.create()
 
     private lateinit var myAdapter: OffersAdapter
 
@@ -135,7 +142,17 @@ class OffersActivity : AppCompatActivity() {
         builder.setTitle("PLease Confirm")
             .setMessage("Are you sure?")
             .setPositiveButton("Sign Out") { _, _ ->
-                finish()
+                chatApi.logout(
+                    header = "Bearer ${UserInfo.token}"
+                ).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            finish()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Void>, t: Throwable) = Unit
+                })
             }
             .setNegativeButton("Cancel", null)
             .create().show()
